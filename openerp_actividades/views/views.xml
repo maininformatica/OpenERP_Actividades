@@ -1,0 +1,295 @@
+<odoo>
+  <data>
+
+	  <record model="ir.ui.view" id="view_mail_actividades_search">
+        <field name="name">Actividades</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">	
+           <search string="Next Activities" >
+                <field name="namemodel"/>
+                <field name="create_user_id"/>
+				<field name="user_id"/>
+				<field name="date_deadline"/>
+                <field name="summary"/>
+				<field name="state"/>
+				
+				
+                <separator/>
+                <filter string="Mis actividades para hoy" name="activities_my_today" domain="[('user_id', '=', uid),('date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Mis actividades" name="activities_my" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Actividades vencidas" name="activities_overdue" domain="[('date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]" help="Show all records which has next action date is before today"/>
+                <filter string="Actividades para hoy" name="activities_today" domain="[('date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Actividades futuras" name="activities_upcoming_all" domain="[('date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))                         ]"/>
+                <group expand="0" string="Group By">
+                        <filter name="group_asignadoa" string="Asignado a" context="{'group_by':'user_id'}"/>
+						<filter name="group_email_to" string="Creado por" context="{'group_by':'create_user_id'}"/>
+						<filter name="group_email_from" string="Origen" context="{'group_by':'res_model_id'}"/>
+                        <filter string="Fecha vencimiento" name="group_date" context="{'group_by':'date_deadline'}"/>
+                </group>
+				
+				
+            </search>
+          </field>
+    </record> 
+
+
+	  <record model="ir.ui.view" id="view_mail_actividadesc_tree">
+        <field name="name">Actividades</field>
+        <field name="model">mail.activity.historico</field>
+        <field name="arch" type="xml">	
+           <tree create="false">
+                <field name="fecha"/>
+                <field name="name"/>
+				<field name="res_name"/>
+				<field name="create_user_id"/>
+				<field name="user_id"/>
+                <field name="summary"/>
+            </tree>
+          </field>
+    </record> 
+
+
+
+
+	  <record model="ir.ui.view" id="view_mail_actividadesc_form">
+        <field name="name">Actividades</field>
+        <field name="model">mail.activity.historico</field>
+        <field name="arch" type="xml">	
+<form string="Log an Activity" create="false">
+				<sheet string="Activity">
+
+                    <group>
+                        <group>
+                           <field name="activity_category" invisible="1"/>
+                           <field name="namemodel" readonly="1"/>
+		 	               <field name="res_model" invisible="1"/>
+                           <field name="res_model_id" invisible="1"/>
+                           <field name="res_id" invisible="1"/>
+                           <field name="name" readonly="1"/>
+						   <field name="summary" readonly="1"/>
+						</group>
+						<group>
+                           <field name="fecha" readonly="1"/>
+                           <field name="create_user_id" readonly="1"/>
+						   <field name="feedback" readonly="1"/>
+						   <br/><br/>
+						   <label for="fecha" string="Acciones"/>
+						   <div>
+						   <button string="Abrir documento" icon="fa-bars" type="object" name="action_open_related_document" attrs="{'invisible': ['|', ('res_model', '=', False), ('res_id', '=', False)]}"/>
+						   </div>
+						</group>
+                    </group>
+
+					<notebook>
+					<page string="Notas">
+                    <field name="note" readonly="1"/>
+					</page>
+                   </notebook>
+                </sheet>
+            </form>
+          </field>
+    </record> 
+
+
+
+
+
+
+	  <record model="ir.ui.view" id="view_mail_actividades_tree">
+        <field name="name">Actividades</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">	
+           <tree string="Next Activities" decoration-danger="date_deadline &lt; current_date" decoration-success="date_deadline == current_date" default_order="date_deadline" create="false">
+                <field name="namemodel"/>
+                
+                <field name="create_user_id"/>
+				<field name="user_id"/>
+				<field name="res_name"/>
+                <field name="activity_type_id"/>
+				<field name="activity_category"/>
+                <field name="summary"/>
+                <field name="date_deadline"/>
+				<field name="calendar_event_id"/>
+				<field name="state"/>
+            </tree>
+          </field>
+    </record> 
+
+
+	  <record model="ir.ui.view" id="view_mail_actividades_form">
+        <field name="name">Actividades</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">	
+        <form string="Log an Activity" create="false">
+				<sheet string="Activity">
+                    <group attrs="{'invisible': [('has_recommended_activities','=',False)]}">
+                        <div class="o_row">
+                            <strong>Actividad prioritaria</strong>
+                            <field name="recommended_activity_type_id" widget="selection_badge" domain="[('previous_type_ids', '=', previous_activity_type_id)]" nolabel="1"/>
+                        </div>
+                    </group>
+                    <group>
+                        <group>
+                         <field name="activity_category" invisible="1"/>
+                         <field name="namemodel"/>
+		 	             <field name="res_model" invisible="1"/>
+                         <field name="res_model_id" invisible="1"/>
+                         <field name="res_id" invisible="1"/>
+                         <field name="force_next" invisible="1"/>
+                         <field name="previous_activity_type_id" invisible="1"/>
+                         <field name="has_recommended_activities" invisible="1"/>
+                         <field name="activity_type_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                         <field name="summary" placeholder="e.g. Discuss proposal"/>
+                         <button string="Abrir documento relacionado" icon="fa-bars" type="object" name="action_open_related_document" attrs="{'invisible': ['|', ('res_model', '=', False), ('res_id', '=', False)]}"/>
+						</group>
+                        <group>
+                            <field name="date_deadline"/>
+                            <field name="create_user_id"/>
+							<field name="user_id"/>
+                        </group>
+                    </group>
+
+					
+					<notebook>
+					<page string="Notas">
+                    <field name="note" placeholder="Log a note..."/>
+					</page>
+					<page string="Avanzado">
+					<group>
+					 <group>
+					     <field name="activity_type_id"/>
+				         <field name="activity_category"/>
+					 </group>
+					 <group>
+  			             <field name="calendar_event_id"/>
+				         <field name="state"/>
+					 </group>
+					</group>
+					</page>
+                   </notebook>
+				   <footer>
+				   <button string="Guardar" type="object" name="write" class="oe_link"/>
+				   <button special="cancel" string="Cerrar"/>
+				   </footer>
+                </sheet>
+            </form>
+          </field>
+    </record> 
+
+
+	  <record model="ir.ui.view" id="view_mail_actividades2_form">
+        <field name="name">Actividades</field>
+        <field name="model">mail.activity</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">	
+              <form string="Log an Activity" create="false">
+				<sheet string="Activity">
+
+                    <group attrs="{'invisible': [('has_recommended_activities','=',False)]}">
+                        <div class="o_row">
+                            <strong>Actividad prioritaria</strong>
+                            <field name="recommended_activity_type_id" widget="selection_badge" domain="[('previous_type_ids', '=', previous_activity_type_id)]" nolabel="1"/>
+                        </div>
+                    </group>
+                    <group>
+                        <group>
+                         <field name="activity_category" invisible="1"/>
+                         <field name="namemodel"/>
+		 	             <field name="res_model" invisible="1"/>
+                         <field name="res_model_id" invisible="1"/>
+                         <field name="res_id" invisible="1"/>
+                         <field name="force_next" invisible="1"/>
+                         <field name="previous_activity_type_id" invisible="1"/>
+                         <field name="has_recommended_activities" invisible="1"/>
+                         <field name="activity_type_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                         <field name="summary" placeholder="e.g. Discuss proposal"/>
+                         <button string="Abrir Documento Relacionado" icon="fa-bars" type="object" name="action_open_related_document" attrs="{'invisible': ['|', ('res_model', '=', False), ('res_id', '=', False)]}"/>
+						</group>
+                        <group>
+                            <field name="date_deadline"/>
+                            <field name="create_user_id"/>
+							<field name="user_id"/>
+                        </group>
+                    </group>
+
+					
+					<notebook>
+					<page string="Notas">
+                    <field name="note" placeholder="Log a note..."/>
+					</page>
+					<page string="Avanzado">
+					<group>
+					 <group>
+					     <field name="activity_type_id"/>
+				         <field name="activity_category"/>
+					 </group>
+					 <group>
+  			             <field name="calendar_event_id"/>
+				         <field name="state"/>
+					 </group>
+					</group>
+					</page>
+                   </notebook>
+                </sheet>
+            </form>
+          </field>
+    </record> 
+
+
+
+    <record model="ir.actions.act_window" id="action_mail_actividadesa">
+        <field name="name">Actividades abiertas</field>
+        <field name="res_model">mail.activity</field>
+        <field name="view_mode">tree,form</field>
+		<field name="domain"></field>
+        <field name="context">{"search_default_activities_my_today":1}</field>
+		<field name="search_view_id" ref="view_mail_actividades_search"/>
+		<field name="view_ids" eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_mail_actividades_tree')}),
+							(0, 0, {'view_mode': 'form', 'view_id': ref('view_mail_actividades2_form')}),]"/>
+   </record>
+
+
+    <record model="ir.actions.act_window" id="action_mail_actividadesc">
+        <field name="name">Actividades cerradas</field>
+        <field name="res_model">mail.activity.historico</field>
+        <field name="view_mode">tree,form</field>
+		<field name="domain"></field>
+   </record>
+
+
+
+
+			<menuitem id="menu_actividades"
+                      name="Actividades"
+                      web_icon="openerp_actividades,static/menu/actividades.png"
+                      sequence="2"/>
+
+			<menuitem id="menu_actividadesa"
+                      name="Actividades abiertas"
+                      action="action_mail_actividadesa"
+                      parent="menu_actividades"
+                      sequence="1"/>
+
+			<menuitem id="menu_actividadesc"
+                      name="Actividades cerradas"
+                      action="action_mail_actividadesc"
+                      parent="menu_actividades"
+                      sequence="2"/>
+
+
+		<menuitem
+			id="calendar.mail_menu_calendar"
+			name="Calendario"
+			sequence="3"
+			parent="menu_actividades"
+			action="calendar.action_calendar_event"
+			web_icon="calendar,static/description/icon.png"
+			groups="base.group_user"/>
+
+
+
+
+  </data>
+</odoo>
