@@ -6,9 +6,7 @@
         Addon mail.activity
     """,
 
-    'description': """
-        Addon de actividades. Menu directo y visible y al cerrar actividad. Guarda las actividades Cerradas
-    """,
+    'description': ['static/description/index.html'],
 
     'author': "MAIN INFORMATICA GANDIA SL",
     'website': "http://www.main-informatica.com",
@@ -18,6 +16,8 @@
     # for the full list
     'category': 'Uncategorized',
     'version': '0.5',
+    'license': 'LGPL-3',
+    'images': ['static/description/openerp_actividades.png'],
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'mail', 'calendar'],
